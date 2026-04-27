@@ -9,6 +9,13 @@ const jwtPassword = 'secret_key';
  */
 function signJwtWithRole(username, role) {
     // Your code here
+    if(role=='admin'||role=='guest'){
+        return jwt.sign({
+            username:username,
+            role:role
+        },jwtPassword);
+    }
+    return null;
 }
 
 /**
@@ -18,4 +25,23 @@ function signJwtWithRole(username, role) {
  */
 function isAdmin(token) {
     // Your code here
+    try{
+        const decoded = jwt.verify(token,jwtPassword);
+        if(!decoded){
+            return false;
+        }
+        const role = decoded.role;
+        if(role=='admin'){
+            return true;
+        }
+        return false;
+    }
+    catch(err){
+        return false;
+    }
 }
+
+module.exports={
+    signJwtWithRole,isAdmin,
+    jwtPassword
+};

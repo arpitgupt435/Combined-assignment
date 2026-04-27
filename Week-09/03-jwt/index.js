@@ -1,3 +1,5 @@
+const jwt = require('jsonwebtoken');
+const jwtPassword = 'abcabc';
 /**
  * Generates a "Short-Lived" JWT that expires in 1 minute.
  * * @param {string} username - The user's email.
@@ -5,6 +7,11 @@
  */
 function signShortLivedToken(username) {
     // Your code here
+    const token = jwt.sign({
+        username,
+        exp:Math.floor(Date.now()/1000)+60
+    },jwtPassword);
+    return token;
 }
 
 /**
@@ -14,4 +21,20 @@ function signShortLivedToken(username) {
  */
 function checkTokenStatus(token) {
     // Your code here
+    try{
+        const decoded = jwt.verify(token,jwtPassword);
+        return "valid";
+    }
+    catch(err){
+        if(err.name=="TokenExpiredError"){
+            return "expired";
+        }
+        if(err.name=="JsonWebTokenError"){
+            return "invalid"
+        }
+    }
 }
+
+module.exports={
+    signShortLivedToken,checkTokenStatus,jwtPassword
+};
